@@ -63,33 +63,34 @@ class InstagramBot():
         self.browser.get('https://www.instagram.com/' + username)
         bod = self.browser.find_element_by_css_selector('body').get_attribute('class')
         if bod == ' p-error dialog-404':
-        	print("Invalid Username.")
+            print("Invalid Username.")
         else:
-        	followButton = self.browser.find_element_by_css_selector('button')
-        	if (followButton.text == 'Following'):
-		        followersLink = self.browser.find_element_by_css_selector('ul li a')
-		        followersLink.click()
-		        time.sleep(2)
-		        followersList = self.browser.find_element_by_css_selector('div[role=\'dialog\'] ul')
-		        numberOfFollowersInList = len(followersList.find_elements_by_css_selector('li'))
-		    
-		        followersList.click()
-		        actionChain = webdriver.ActionChains(self.browser)
-		        while (numberOfFollowersInList < max):
-		            actionChain.key_down(Keys.SPACE).key_up(Keys.SPACE).perform()
-		            numberOfFollowersInList = len(followersList.find_elements_by_css_selector('li'))
-		            print(numberOfFollowersInList)
-		        
-		        followers = []
-		        for user in followersList.find_elements_by_css_selector('li'):
-		            userLink = user.find_element_by_css_selector('a').get_attribute('href')
-		            print(userLink)
-		            followers.append(userLink)
-		            if (len(followers) == max):
-		                break
-		        return followers
-        	else:
-		        print("You are not following this user")
+            followButton = self.browser.find_element_by_css_selector('button')
+            temp = self.browser.find_element_by_css_selector('a').get_attribute('class')
+            if (followButton.text == 'Following') or (temp == ' JNjtf'):
+                followersLink = self.browser.find_element_by_css_selector('ul li a')
+                followersLink.click()
+                time.sleep(2)
+                followersList = self.browser.find_element_by_css_selector('div[role=\'dialog\'] ul')
+                numberOfFollowersInList = len(followersList.find_elements_by_css_selector('li'))
+            
+                followersList.click()
+                actionChain = webdriver.ActionChains(self.browser)
+                while (numberOfFollowersInList < max):
+                    actionChain.key_down(Keys.SPACE).key_up(Keys.SPACE).perform()
+                    numberOfFollowersInList = len(followersList.find_elements_by_css_selector('li'))
+                    print(numberOfFollowersInList)
+                
+                followers = []
+                for user in followersList.find_elements_by_css_selector('li'):
+                    userLink = user.find_element_by_css_selector('a').get_attribute('href')
+                    print(userLink)
+                    followers.append(userLink)
+                    if (len(followers) == max):
+                        break
+                return followers
+            else:
+                print("You are not following this user")
 
 
     def closeBrowser(self):
@@ -106,22 +107,22 @@ pwd = input("Enter Password : ")
 bot = InstagramBot(uname, pwd)
 bot.signIn()
 while True:
-	print("\n1.LIKE Recent Post\n2.Follow a User\n3.Unfollow a User\n4.Get a User's Followers\n5.Exit")
-	choose = int(input(">>> "))
-	choice = choose
-	if choice == 5:
-		closeBrowser()
-		break
-	elif choice == 1:
-		bot.likerecentpost()
-	elif choice == 2:
-		user = input("Enter Username to Follow : ")
-		bot.followWithUsername(user)
-	elif choice == 3:
-		user = input("Enter Username to UnFollow : ")
-		bot.unfollowWithUsername(user)
-	elif choice == 4:
-		user = input("Enter Username to get Followers : ")
-		bot.getUserFollowers(user,10)
-	else:
-		print("Invalid choice, please choose again\n")
+    print("\n1.LIKE Recent Post\n2.Follow a User\n3.Unfollow a User\n4.Get a User's Followers\n5.Exit")
+    choose = int(input(">>> "))
+    choice = choose
+    if choice == 5:
+        bot.closeBrowser()
+        break
+    elif choice == 1:
+        bot.likerecentpost()
+    elif choice == 2:
+        user = input("Enter Username to Follow : ")
+        bot.followWithUsername(user)
+    elif choice == 3:
+        user = input("Enter Username to UnFollow : ")
+        bot.unfollowWithUsername(user)
+    elif choice == 4:
+        user = input("Enter Username to get Followers : ")
+        bot.getUserFollowers(user,100)
+    else:
+        print("Invalid choice, please choose again\n")
